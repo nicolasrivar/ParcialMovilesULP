@@ -1,0 +1,54 @@
+package com.example.parcial.ui;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.parcial.databinding.FragmentListarAutosBinding;
+
+public class ListarAutosFragment extends Fragment {
+
+    private FragmentListarAutosBinding binding;
+    private ListarAutosViewModel viewModel;
+    private AutoAdapter autoAdapter;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentListarAutosBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ListarAutosViewModel.class);
+
+        autoAdapter = new AutoAdapter();
+        binding.recyclerViewAutos.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewAutos.setAdapter(autoAdapter);
+
+        viewModel.getAutosOrdenados().observe(getViewLifecycleOwner(), autos -> {
+            autoAdapter.setAutos(autos);
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.mostrarAutos();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
